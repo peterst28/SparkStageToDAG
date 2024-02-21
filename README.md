@@ -1,6 +1,6 @@
 # SparkStageToDAG
 
-When diagnosing performance issues in Spark, it's common to quickly identify both the slowest stage and the slowest SQL query but then have no way to figure out where in the SQL DAG the slowest stage maps to.  This script, written for Databricks, fixes this.  Just plug in the id of your slowest stage and run the notebook SparkStageToDAG, and it will give you print out which nodes in the DAG the stage corresponds to.
+When diagnosing performance issues in Spark it's common to quickly identify both the slowest stage and the slowest SQL query but then have no way to figure out where in the SQL DAG the slowest stage maps to.  This script, written for Databricks, fixes this.  Just plug in the id of your slowest stage and run the notebook SparkStageToDAG, and it will give you print out which nodes in the DAG the stage corresponds to.
 
 ## How to use
 
