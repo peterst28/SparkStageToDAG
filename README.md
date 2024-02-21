@@ -2,6 +2,8 @@
 
 When diagnosing performance issues in Spark it's common to quickly identify both the slowest stage and the slowest SQL query but then have no way to figure out where in the SQL DAG the slowest stage maps to. This script, written for Databricks, fixes this. Just plug in the ID of a stage, run the notebook SparkStageToDAG, and it will print out which nodes in the DAG the stage corresponds to.
 
+It needs to run on the same cluster as the stage/query you're trying to debug.
+
 ## How to use
 
 1. Find the stage you're interested in & put its ID in the stage_id parameter
