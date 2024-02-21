@@ -24,4 +24,17 @@ The `node_id` column is most important.  It tells you the id of the node in the 
 
 <img src="https://peterstern.blob.core.windows.net/publicfiles/get_stage_sql_dag.png" width=75%>
 
-The `node_id` is also used in the SQL Plan in the details under the DAG.  The node_name is just for informational purpose and may provide a clue before you even look at the SQL DAG.  
+The `node_id` is also used in the SQL Plan in the details under the DAG:
+
+<img src="https://peterstern.blob.core.windows.net/publicfiles/sql_physical_plan.png" width=75%>
+
+The node_name is just for informational purpose and may provide a clue before you even look at the SQL DAG.  
+
+## Limitations
+
+* Doesn't work on shared clusters
+* Only works on the same cluster as the stage/query you're trying to debug.
+
+## Built By
+
+Peter Stern
