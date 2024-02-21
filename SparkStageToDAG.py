@@ -1,15 +1,22 @@
 # Databricks notebook source
+dbutils.widgets.text("stage_id", "5")
+dbutils.widgets.text("working_dir", "/Volumes/sternp/default/volume/tmp/stage_highlighter/Eventlogs/current/")
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC
 # MAGIC # About this notebook
 # MAGIC
-# MAGIC When diagnosing performance issues in Spark it's common to quickly identify both the slowest stage and the slowest SQL query but then have no way to figure out where in the SQL DAG the slowest stage maps to. This script, written for Databricks, fixes this. Just plug in the id of your slowest stage and run the notebook SparkStageToDAG, and it will give you print out which nodes in the DAG the stage corresponds to.
+# MAGIC When diagnosing performance issues in Spark it's common to quickly identify both the slowest stage and the slowest SQL query but then have no way to figure out where in the SQL DAG the slowest stage maps to. This script, written for Databricks, fixes this. Just plug in the ID of a stage, run the notebook SparkStageToDAG, and it will print out which nodes in the DAG the stage corresponds to.
+# MAGIC
+# MAGIC It needs to run on the same cluster as the stage/query you're trying to debug.
 # MAGIC
 # MAGIC ## How to use
 # MAGIC
-# MAGIC 1. Find the stage you're interested in & put its ID in the stage_id parameter
-# MAGIC 1. Choose or create a working directory that the script can work in.  It needs to either be in DBFS or a Volume.  It needs to be a location this notebook can write to and Spark can read from.  This notebook will save the current cluster's logs in this directory.
-# MAGIC 1. Run this notebook on the cluster that ran the query you're trying to profile.  It will use the cluster's logs to determine where in the SQL DAG the stage ran.
+# MAGIC 1. Set the `stage_id` parameter to the ID of the stage you're interested in
+# MAGIC 1. Set the `working_dir` parameter to a DBFS path or a Volume.  The script will copy logs from your cluster to this location & then process them.
+# MAGIC 1. Run the `SparkStageToDAG` on the cluster that ran the query you're trying to profile.
 # MAGIC
 # MAGIC ## Interpreting the results
 # MAGIC
@@ -23,18 +30,28 @@
 # MAGIC
 # MAGIC The `node_id` is the most important column.  It tells you the id of the node in the SQL DAG.  In the SQL DAG, this number will show up in the name of the node:  
 # MAGIC
-# MAGIC ![SQL DAG Image](https://peterstern.blob.core.windows.net/publicfiles/get_stage_sql_dag.png "SQL DAG")
+# MAGIC <img src="https://peterstern.blob.core.windows.net/publicfiles/get_stage_sql_dag.png" width=75%>
+# MAGIC
+# MAGIC The `node_id` is also used in the SQL Plan in the details under the DAG:
+# MAGIC
+# MAGIC <img src="https://peterstern.blob.core.windows.net/publicfiles/sql_physical_plan.png" width=75%>
 # MAGIC
 # MAGIC The node_name is just for informational purpose and may provide a clue before you even look at the SQL DAG.  
+# MAGIC
+# MAGIC ## Limitations
+# MAGIC
+# MAGIC * Doesn't work on shared clusters
+# MAGIC * Only works on the same cluster as the stage/query you're trying to debug.
+# MAGIC
+# MAGIC ## Built By
+# MAGIC
+# MAGIC Peter Stern
 
 # COMMAND ----------
 
 # DBTITLE 1,Get Parameters
-dbutils.widgets.text("stage_id", "5")
 stage_id = int(dbutils.widgets.get('stage_id'))
-
-dbutils.widgets.text("working_dir", "/Volumes/sternp/default/volume/tmp/stage_highlighter/Eventlogs/current/")
-working_dir = dbutils.widgets.get('working_dir')
+working_dir = dbutils.widgets.get('working_dir') + '/current'
 
 # COMMAND ----------
 
@@ -122,4 +139,4 @@ matches_df.display()
 
 # COMMAND ----------
 
-
+os.system(f'rm -r {working_dir}')
