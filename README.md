@@ -6,9 +6,9 @@ It needs to run on the same cluster as the stage/query you're trying to debug.
 
 ## How to use
 
-1. Find the stage you're interested in & put its ID in the stage_id parameter
-1. Choose or create a working directory that the script can work in.  It needs to either be in DBFS or a Volume.  It needs to be a location this notebook can write to and Spark can read from.  This notebook will save the current cluster's logs in this directory.
-1. Run this notebook on the cluster that ran the query you're trying to profile.  It will use the cluster's logs to determine where in the SQL DAG the stage ran.
+1. Set the `stage_id` parameter to the ID of the stage you're interested in
+1. Set the `working_dir` parameter to a DBFS path or a Volume.  The script will copy logs from your cluster to this location & then process them.
+1. Run the `SparkStageToDAG` on the cluster that ran the query you're trying to profile.
 
 ## Interpreting the results
 
@@ -20,8 +20,8 @@ In the last cell you will get a table that looks like this:
 |8|PhotonShuffleExchangeSink|
 |9|PhotonShuffleMapStage|
 
-The `node_id` is the most important column.  It tells you the id of the node in the SQL DAG.  In the SQL DAG, this number will show up in the name of the node:  
+The `node_id` column is most important.  It tells you the id of the node in the SQL DAG.  This number will show up in the name of the node in the SQL DAG:  
 
 <img src="https://peterstern.blob.core.windows.net/publicfiles/get_stage_sql_dag.png" width=75%>
 
-The node_name is just for informational purpose and may provide a clue before you even look at the SQL DAG.  
+The `node_id` is also used in the SQL Plan in the details under the DAG.  The node_name is just for informational purpose and may provide a clue before you even look at the SQL DAG.  
